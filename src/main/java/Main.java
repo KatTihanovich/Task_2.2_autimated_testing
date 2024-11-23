@@ -37,11 +37,12 @@ public class Main {
         logger.info("Программа завершена.\n");
     }
 
+    //Добавления логирования для записи результатов проверок в файл triangle.log
     static void setupLogger() {
         try {
             // Установка обработчика для записи в файл
             FileHandler fileHandler = new FileHandler("triangle.log", true);
-            // Устанавливаем формат логирования без даты и времени
+            // Устанавливка формата логирования без даты и времени
             fileHandler.setFormatter(new Formatter() {
                 @Override
                 public String format(LogRecord record) {
