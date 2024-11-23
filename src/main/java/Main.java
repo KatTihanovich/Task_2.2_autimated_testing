@@ -41,7 +41,7 @@ public class Main {
     }
 
     static boolean isValidTriangle(int a, int b, int c) {
-        boolean valid = a > 0 && b > 0 && c > 0 && (long) a + b > c && (long) a + c > b && (long) b + c > a;
+        return a > 0 && b > 0 && c > 0 && (long) a + b > c && (long) a + c > b && (long) b + c > a;
     }
 
     static String getTriangleType(int a, int b, int c) {
