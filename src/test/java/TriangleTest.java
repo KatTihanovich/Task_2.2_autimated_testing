@@ -47,7 +47,7 @@ class TriangleTest {
             "0, 0",
             "12345, 12345"
     })
-    void testValidateAndParseInput_Valid(String input, int expected) {
+    void testValidateAndParseInputValid(String input, int expected) {
         assertEquals(expected, Main.validateAndParseInput(input));
     }
 
@@ -60,7 +60,7 @@ class TriangleTest {
             "'ф', 'java.lang.NumberFormatException'",
             "'№', 'java.lang.NumberFormatException'"
     })
-    void testValidateAndParseInput_Invalid(String input, Class<? extends Throwable> exceptionClass) {
+    void testValidateAndParseInputInvalid(String input, Class<? extends Throwable> exceptionClass) {
         assertThrows(exceptionClass, () -> Main.validateAndParseInput(input));
     }
 }
