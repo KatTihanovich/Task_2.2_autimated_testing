@@ -2,46 +2,54 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите стороны треугольника:");
-        int a;
-        int b;
-        int c;
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println("Введите стороны треугольника:");
 
-        try {
-            a = getValidInput(scanner, "Введите сторону a: ");
-            b = getValidInput(scanner, "Введите сторону b: ");
-            c = getValidInput(scanner, "Введите сторону c: ");
+            int a = getValidInput(scanner, "Введите сторону a: ");
+            int b = getValidInput(scanner, "Введите сторону b: ", a);
+            int c = getValidInput(scanner, "Введите сторону c: ", a, b);
 
             if (isValidTriangle(a, b, c)) {
                 System.out.println("Треугольник. \nТип треугольника: " + getTriangleType(a, b, c));
             } else {
-                System.out.println("Не треугольник");
+                System.out.println("Не треугольник: сумма двух сторон должна быть больше третьей.");
             }
         } catch (Exception e) {
-            System.out.println("Ошибка ввода. Попробуйте снова.");
+            System.err.println("Критическая ошибка. Попробуйте перезапустить программу.");
+            e.printStackTrace();
         }
     }
 
-    static int getValidInput(Scanner scanner, String prompt) {
+    static int getValidInput(Scanner scanner, String prompt, int... previous) {
         while (true) {
-            System.out.print(prompt);
-            String input = scanner.nextLine();
-            if (!input.matches("\\d+")) {
-                System.out.println("Ошибка: ввод должен содержать только целое неотрицательное число, без символов и букв.");
-                continue;
+            // Показываются ранее введённые значения, если это не первый ввод
+            if (previous.length > 0 && (previous[0] != 0 || previous.length > 1)) {
+                System.out.print("Ранее введённые стороны: ");
+                for (int value : previous) {
+                    System.out.print(value + " ");
+                }
+                System.out.println();
             }
 
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+
             try {
+                if (!input.matches("\\d+")) {
+                    throw new NumberFormatException("Ошибка: ввод должен быть неотрицательным целым числом.");
+                }
                 return Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                System.out.println("Ошибка: введенное число слишком велико. Введите число от 0 до " + Integer.MAX_VALUE + ".");
+                System.out.println(e.getMessage());
             }
         }
     }
 
     static boolean isValidTriangle(int a, int b, int c) {
-        return a > 0 && b > 0 && c > 0 && (long) a + b > c && (long) a + c > b && (long) b + c > a;
+        return a >= 0 && b >= 0 && c >= 0 &&
+                (long) a + b > c &&
+                (long) a + c > b &&
+                (long) b + c > a;
     }
 
     static String getTriangleType(int a, int b, int c) {
