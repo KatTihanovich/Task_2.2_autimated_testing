@@ -1,5 +1,6 @@
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TriangleTest {
@@ -20,8 +21,8 @@ class TriangleTest {
             "2147483647, 2147483647, 2147483647, true"
     })
     void testIsValidTriangle(int a, int b, int c, boolean expected) {
-        assertEquals(expected, Main.isValidTriangle(a, b, c),
-                "Проверка валидности треугольника с сторонами " + a + ", " + b + ", " + c);
+        int[] sides = {a, b, c};
+        assertEquals(expected, Main.isValidTriangle(sides));
     }
 
     @ParameterizedTest
@@ -35,27 +36,31 @@ class TriangleTest {
             "2147483647, 2147483647, 2147483646, Равнобедренный",
             "2147483647, 2147483647, 2147483647, Равносторонний"
     })
-    void testGetTriangleType(int a, int b, int c, String expected) {
-        assertEquals(expected, Main.getTriangleType(a, b, c),
-                "Тип треугольника с сторонами " + a + ", " + b + ", " + c);
+    void testGetTriangleType(int a, int b, int c, String expectedType) {
+        int[] sides = {a, b, c};
+        assertEquals(expectedType, Main.getTriangleType(sides));
     }
 
     @ParameterizedTest
     @CsvSource({
-            "-1.2, 5, 4",
-            "5, 5.0, 4",
-            "213535, -2135, -1513",
-            "5.1, 12, 13",
-            "15, 15ю, 25",
-            "2.2, 2.2, 2.2",
-            "ф, в, 2",
-            "цв, 2в, №"
+            "5, 5",
+            "0, 0",
+            "12345, 12345"
     })
-    void testInvalidInput(String a, String b, String c) {
-        assertThrows(NumberFormatException.class, () -> {
-            Integer.parseInt(a);
-            Integer.parseInt(b);
-            Integer.parseInt(c);
-        });
+    void testValidateAndParseInput_Valid(String input, int expected) {
+        assertEquals(expected, Main.validateAndParseInput(input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "'-1', 'java.lang.NumberFormatException'",
+            "'-', 'java.lang.NumberFormatException'",
+            "'5.1', 'java.lang.NumberFormatException'",
+            "'15ю', 'java.lang.NumberFormatException'",
+            "'ф', 'java.lang.NumberFormatException'",
+            "'№', 'java.lang.NumberFormatException'"
+    })
+    void testValidateAndParseInput_Invalid(String input, Class<? extends Throwable> exceptionClass) {
+        assertThrows(exceptionClass, () -> Main.validateAndParseInput(input));
     }
 }

@@ -5,12 +5,15 @@ public class Main {
         try (Scanner scanner = new Scanner(System.in)) {
             System.out.println("Введите стороны треугольника:");
 
-            int a = getValidInput(scanner, "Введите сторону a: ");
-            int b = getValidInput(scanner, "Введите сторону b: ", a);
-            int c = getValidInput(scanner, "Введите сторону c: ", a, b);
+            int[] sides = new int[3];
+            boolean[] isSet = new boolean[3];
 
-            if (isValidTriangle(a, b, c)) {
-                System.out.println("Треугольник. \nТип треугольника: " + getTriangleType(a, b, c));
+            sides[0] = getValidInput(scanner, "Введите сторону a: ", sides, isSet, 0);
+            sides[1] = getValidInput(scanner, "Введите сторону b: ", sides, isSet, 1);
+            sides[2] = getValidInput(scanner, "Введите сторону c: ", sides, isSet, 2);
+
+            if (isValidTriangle(sides)) {
+                System.out.println("Треугольник. \nТип треугольника: " + getTriangleType(sides));
             } else {
                 System.out.println("Не треугольник: сумма двух сторон должна быть больше третьей.");
             }
@@ -20,39 +23,53 @@ public class Main {
         }
     }
 
-    static int getValidInput(Scanner scanner, String prompt, int... previous) {
-        while (true) {
-            // Показываются ранее введённые значения, если это не первый ввод
-            if (previous.length > 0 && (previous[0] != 0 || previous.length > 1)) {
-                System.out.print("Ранее введённые стороны: ");
-                for (int value : previous) {
-                    System.out.print(value + " ");
-                }
-                System.out.println();
+    static String getInput(Scanner scanner, String prompt, int[] sides, boolean[] isSet) {
+        System.out.print("Текущие значения сторон: ");
+        for (int i = 0; i < sides.length; i++) {
+            if (isSet[i]) {
+                System.out.print(sides[i] + " ");
             }
+        }
+        System.out.println();
 
-            System.out.print(prompt);
-            String input = scanner.nextLine().trim();
+        System.out.print(prompt);
+        return scanner.nextLine().trim();
+    }
 
+    static int validateAndParseInput(String input) {
+        if (!input.matches("\\d+")) {
+            throw new NumberFormatException("Ошибка: ввод должен быть неотрицательным целым числом.");
+        }
+        return Integer.parseInt(input);
+    }
+
+    static int getValidInput(Scanner scanner, String prompt, int[] sides, boolean[] isSet, int index) {
+        while (true) {
             try {
-                if (!input.matches("\\d+")) {
-                    throw new NumberFormatException("Ошибка: ввод должен быть неотрицательным целым числом.");
-                }
-                return Integer.parseInt(input);
+                String rawInput = getInput(scanner, prompt, sides, isSet);
+                int value = validateAndParseInput(rawInput);
+                isSet[index] = true;
+                return value;
             } catch (NumberFormatException e) {
                 System.out.println(e.getMessage());
             }
         }
     }
 
-    static boolean isValidTriangle(int a, int b, int c) {
-        return a >= 0 && b >= 0 && c >= 0 &&
+    static boolean isValidTriangle(int[] sides) {
+        int a = sides[0];
+        int b = sides[1];
+        int c = sides[2];
+        return a > 0 && b > 0 && c > 0 &&
                 (long) a + b > c &&
                 (long) a + c > b &&
                 (long) b + c > a;
     }
 
-    static String getTriangleType(int a, int b, int c) {
+    static String getTriangleType(int[] sides) {
+        int a = sides[0];
+        int b = sides[1];
+        int c = sides[2];
         if (a == b && b == c) {
             return "Равносторонний";
         } else if (a == b || b == c || a == c) {
